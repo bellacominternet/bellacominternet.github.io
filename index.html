@@ -1,1 +1,206 @@
-index.html
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bellacom Internet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#0f1b2d;--muted:#5b6b80;--line:#e3e9f1;--brand:#0b6bcb;--brand2:#0a4f97;--ok:#138a4a;--okbg:#e7f6ee;--no:#b4441f;--nobg:#fdeee8;--wa:#1fa855}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px 90px}
+header{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;padding:22px 16px 60px}
+header .top{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.25rem}
+.hero{max-width:900px;margin:18px auto 0}
+.hero h1{margin:0;line-height:1.25;font-size:1.8rem}
+.hero p{margin:6px 0 0;opacity:.9}
+nav{display:flex;gap:8px;margin:-34px auto 18px;max-width:900px;padding:0 16px;position:sticky;top:8px;z-index:5}
+nav button{flex:1;border:0;background:#fff;border-radius:14px;padding:10px 6px;font:inherit;font-size:.9rem;font-weight:700;color:var(--muted);box-shadow:0 4px 14px rgba(15,27,45,.08);cursor:pointer}
+nav button.on{background:var(--ink);color:#fff}
+section{display:none}
+section.on{display:block}
+h2{font-size:1.2rem;margin:8px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.pkg{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.speed{font:800 2.2rem 'Inter',sans-serif;color:var(--brand)}
+.speed small{font-size:1rem;color:var(--muted);font-weight:600}
+.price{font:800 1.4rem 'Inter',sans-serif}
+.per{color:var(--muted);font-size:.9rem}
+.pkg ul{list-style:none;padding:0;margin:10px 0 14px;color:var(--muted);font-size:.95rem}
+.pkg li::before{content:"\2713  ";color:var(--ok);font-weight:700}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:12px;padding:10px;font:inherit;font-weight:700;text-decoration:none;cursor:pointer}
+.btn.wa{background:var(--wa);color:#fff}
+.btn.ghost{background:#eef3f9;color:var(--brand2)}
+.btn.main{background:var(--brand);color:#fff;padding:13px;font-size:1.05rem}
+.table{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);gap:12px}
+.row:last-child{border-bottom:0}
+.row .amt{font-weight:700;white-space:nowrap}
+.row.total{background:#f0f6fd;font-weight:700}
+.note{color:var(--muted);font-size:.9rem;margin:10px 4px}
+.search{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.search label{font-weight:700;display:block;margin-bottom:6px}
+.search input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:1rem}
+.result{margin-top:14px;border-radius:14px;padding:14px 16px;display:none}
+.result.part{display:block;background:#fff6e0;color:#8a5a00}
+.result.ok{display:block;background:var(--okbg);color:var(--ok)}
+.result.no{display:block;background:var(--nobg);color:var(--no)}
+.result b{display:block;font-size:1.05rem}
+.result .btn{margin-top:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{background:#eef3f9;color:var(--brand2);border-radius:999px;padding:2px 12px;border:0;font:inherit;font-size:.9rem;cursor:pointer}
+.contact{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;display:flex;justify-content:center;z-index:9}
+.form{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:14px}
+.field label{font-weight:700;display:block;margin-bottom:4px}
+.field .opt{color:var(--muted);font-weight:400;font-size:.85rem}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:1rem;background:#fff;color:var(--ink)}
+.field textarea{min-height:80px}
+.field.err input,.field.err select,.field.err textarea{border-color:var(--no)}
+.field .msg{color:var(--no);font-size:.85rem;display:none}
+.field.err .msg{display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.done{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;display:none}
+.done.on{display:block}
+.done h3{margin:0 0 4px;color:var(--ok)}
+.ref{font-weight:800;font-size:1.3rem;display:inline-block;background:#eef3f9;border-radius:10px;padding:2px 12px;margin:6px 0}
+.sum{border:1px solid var(--line);border-radius:14px;margin:12px 0;overflow:hidden}
+.sum .row{padding:8px 14px;font-size:.95rem}
+.steps{color:var(--muted);font-size:.9rem;margin:10px 0}
+.wacard{background:var(--okbg);border-radius:14px;padding:12px 16px;margin:12px 0;text-align:center}
+.wanum{font-weight:800;font-size:1.5rem;color:var(--ok)}
+.num{font-weight:600;font-size:.85rem;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+<div class="top"><div class="logo">
+<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M2 8.5a15 15 0 0 1 20 0"/><path d="M5 12a10 10 0 0 1 14 0"/><path d="M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.3" fill="#fff"/></svg>
+<span>Bellacom Internet</span></div></div>
+<div class="hero"><h1>Unlimited internet on Adyala Road</h1><p>Unlimited data on every package | Installation within 1 day</p></div>
+</header>
+<nav>
+<button class="on" data-tab="packages">Packages</button>
+<button data-tab="charges">Charges</button>
+<button data-tab="area">Area</button>
+<button data-tab="book">Book</button>
+</nav>
+<div class="wrap">
+<section id="packages" class="on"><h2>Monthly packages</h2><div class="grid" id="pkgGrid"></div></section>
+<section id="charges"><h2>New connection charges</h2><div class="table" id="chTable"></div>
+<p class="note">One-time charges = installation + router + wire. Wire is a fixed Rs 2,000, no matter how much is used. The monthly package bill is separate.</p></section>
+<section id="area"><h2>Is our service available in your area?</h2>
+<div class="search"><label for="areaIn">Type your area name</label>
+<input id="areaIn" autocomplete="off">
+<div class="result" id="areaRes"></div>
+<p class="note" style="margin:16px 0 0">We currently serve these areas (* partially):</p>
+<div class="chips" id="chips"></div></div></section>
+<section id="book"><h2>Book a new connection</h2>
+<form class="form" id="bookForm" novalidate>
+<div class="field"><label for="fName">Full name</label><input id="fName"><span class="msg">This field is required</span></div>
+<div class="two">
+<div class="field"><label for="fPhone">Mobile number</label><input id="fPhone" type="tel" placeholder="03XX-XXXXXXX"><span class="msg">Enter a valid mobile number</span></div>
+<div class="field"><label for="fCnic">CNIC <span class="opt">(optional)</span></label><input id="fCnic" inputmode="numeric" placeholder="XXXXX-XXXXXXX-X"></div>
+</div>
+<div class="field"><label for="fPkg">Package</label><select id="fPkg"></select><span class="msg">This field is required</span></div>
+<div class="field"><label for="fRouter">Router</label><select id="fRouter"></select></div>
+<div class="field"><label for="fArea">Area</label><select id="fArea"></select><span class="msg">This field is required</span></div>
+<div class="field" id="otherWrap" style="display:none"><label for="fOther">Type your area name</label><input id="fOther"><span class="msg">This field is required</span></div>
+<div class="field"><label for="fAddr">Full address (house no., street, block)</label><textarea id="fAddr"></textarea><span class="msg">This field is required</span></div>
+<div class="two">
+<div class="field"><label for="fDate">Installation day</label><input id="fDate" type="date"></div>
+<div class="field"><label for="fTime">Preferred time</label><select id="fTime"><option>Morning (9-12)</option><option>Afternoon (12-4)</option><option>Evening (4-8)</option></select></div>
+</div>
+<div class="field"><label for="fNote">Anything else <span class="opt">(optional)</span></label><input id="fNote"></div>
+<button class="btn main" type="submit">Confirm booking</button>
+</form>
+<div class="done" id="done">
+<h3>Your booking is ready!</h3>
+<div>Booking no.: <span class="ref" id="refNo"></span></div>
+<div class="sum" id="sum"></div>
+<div class="wacard"><div>Our WhatsApp number</div><div class="wanum">+92 312 5575670</div><div class="note" style="margin:0">Save this number - all updates about your connection will come from here.</div></div>
+<p class="steps">Last step: tap the button below and press Send on the WhatsApp message that opens. Our team will then contact you.</p>
+<a class="btn wa" id="sendWa" target="_blank" rel="noopener">Send booking on WhatsApp</a>
+<button class="btn ghost" id="editBtn" style="margin-top:8px">Edit details</button>
+</div>
+</section>
+</div>
+<div class="contact"><div style="flex:1;max-width:420px">
+<button class="btn main" id="bookMain">Book a new connection</button>
+<div class="num">WhatsApp: +92 312 5575670</div></div></div>
+<script>
+var WA="923125575670", INSTALL=1000, WIRE=2000;
+var PKGS=[[4,1000],[6,1200],[9,1500],[12,2000],[15,2500],[18,3000],[24,3500]];
+var ROUTERS=[["2.4G",3000],["5G",5000]];
+var AREAS=["Janjua Town","Banker Colony","Mehmood Abad","UBL Bank","Hill View","Doctor Colony","Zulfiqar Colony","Defence Road"];
+var PARTIAL="Defence Road";
+function $(id){return document.getElementById(id)}
+function rs(n){return "Rs "+n.toLocaleString("en-US")}
+function wa(t){return "https://wa.me/"+WA+"?text="+encodeURIComponent(t)}
+function norm(s){return s.toLowerCase().replace(/[\s\-_.]/g,"")}
+var h="";
+PKGS.forEach(function(p){h+='<div class="pkg"><div class="speed">'+p[0]+' <small>Mbps</small></div><div class="price">'+rs(p[1])+'</div><div class="per">/ month</div><ul><li>Unlimited data</li><li>Installation within 1 day</li></ul><button class="btn main" onclick="goBook('+p[0]+')">Book now</button></div>'});
+$("pkgGrid").innerHTML=h;
+h='<div class="row"><span>Installation fee</span><span class="amt">'+rs(INSTALL)+'</span></div>';
+ROUTERS.forEach(function(r){h+='<div class="row"><span>'+r[0]+' router</span><span class="amt">'+rs(r[1])+'</span></div>'});
+h+='<div class="row"><span>Wire / cable</span><span class="amt">'+rs(WIRE)+' (fixed)</span></div><div class="row"><span>Security deposit</span><span class="amt">None</span></div>';
+ROUTERS.forEach(function(r){h+='<div class="row total"><span>Total with '+r[0]+' router</span><span class="amt">'+rs(INSTALL+WIRE+r[1])+'</span></div>'});
+$("chTable").innerHTML=h;
+$("chips").innerHTML=AREAS.map(function(a){return '<button class="chip">'+a+(a==PARTIAL?" *":"")+'</button>'}).join("");
+document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){$("areaIn").value=c.textContent.replace(" *","");checkArea()}});
+$("fPkg").innerHTML='<option value="">- Select -</option>'+PKGS.map(function(p){return '<option value="'+p[0]+'">'+p[0]+' Mbps - '+rs(p[1])+' / month</option>'}).join("");
+$("fRouter").innerHTML=ROUTERS.map(function(r,i){return '<option value="'+i+'">'+r[0]+' router - '+rs(r[1])+'</option>'}).join("");
+$("fArea").innerHTML='<option value="">- Select -</option>'+AREAS.map(function(a){return '<option>'+a+'</option>'}).join("")+'<option value="__other">My area is not listed</option>';
+function checkArea(){
+var v=$("areaIn").value.trim(),box=$("areaRes");
+if(v.length<2){box.className="result";return}
+var m=AREAS.find(function(a){return norm(a).indexOf(norm(v))>-1||norm(v).indexOf(norm(a))>-1});
+if(!m){box.className="result no";box.innerHTML='<b>This area is not on our list yet</b>Message us and we will check for you.<a class="btn wa" target="_blank" href="'+wa("Hello, my area is "+v+". Is a connection available here?")+'">Ask on WhatsApp</a>';return}
+var p=(m==PARTIAL);
+box.className="result "+(p?"part":"ok");
+box.innerHTML='<b>'+(p?"Partially covered (!)":"Yes! Service is available in your area")+'</b>'+(p?"We cover some parts of this area. Book now and we will confirm for your address.":"Book your connection now.")+'<button class="btn main" onclick="goBook(0,\''+m+'\')">Book a connection now</button>';
+}
+$("areaIn").oninput=checkArea;
+function showTab(id){
+document.querySelectorAll("nav button").forEach(function(b){b.classList.toggle("on",b.dataset.tab==id)});
+document.querySelectorAll("section").forEach(function(s){s.classList.toggle("on",s.id==id)});
+document.querySelector(".contact").style.display=(id=="book")?"none":"";
+window.scrollTo(0,0);
+}
+document.querySelectorAll("nav button").forEach(function(b){b.onclick=function(){showTab(b.dataset.tab)}});
+function goBook(speed,area){
+showTab("book");$("done").classList.remove("on");$("bookForm").style.display="";
+if(speed)$("fPkg").value=speed;
+if(area){$("fArea").value=area;$("otherWrap").style.display="none"}
+}
+$("bookMain").onclick=function(){goBook()};
+$("fArea").onchange=function(){$("otherWrap").style.display=($("fArea").value=="__other")?"":"none"};
+$("editBtn").onclick=function(){$("done").classList.remove("on");$("bookForm").style.display=""};
+var d=new Date();d.setDate(d.getDate()+1);$("fDate").min=d.toISOString().slice(0,10);
+$("bookForm").onsubmit=function(e){
+e.preventDefault();
+document.querySelectorAll(".field").forEach(function(f){f.classList.remove("err")});
+var need=["fName","fPkg","fArea","fAddr"];if($("fArea").value=="__other")need.push("fOther");
+var bad=null;
+need.forEach(function(id){if(!$(id).value.trim()){$(id).closest(".field").classList.add("err");bad=bad||id}});
+var ph=$("fPhone").value.replace(/[\s-]/g,"");
+if(!/^(\+?92|0)?3\d{9}$/.test(ph)){$("fPhone").closest(".field").classList.add("err");bad=bad||"fPhone"}
+if(bad){$(bad).focus();return}
+var pk=PKGS.find(function(p){return String(p[0])==$("fPkg").value});
+var r=ROUTERS[$("fRouter").value];
+var area=($("fArea").value=="__other")?$("fOther").value.trim():$("fArea").value;
+var when=[$("fDate").value,$("fTime").value].filter(Boolean).join(" - ");
+var total=INSTALL+WIRE+r[1];
+var ref="NC-"+String(Date.now()).slice(-6);
+var rows=[["Name",$("fName").value.trim()],["Mobile",$("fPhone").value.trim()],["CNIC",$("fCnic").value.trim()],["Package",pk[0]+" Mbps - "+rs(pk[1])+" / month"],["Router",r[0]],["Area",area],["Address",$("fAddr").value.trim()],["Installation",when],["Note",$("fNote").value.trim()]].filter(function(x){return x[1]});
+var money=[["Installation fee",rs(INSTALL)],["Router ("+r[0]+")",rs(r[1])],["Wire / cable",rs(WIRE)],["Total one-time charges",rs(total)],["Monthly package bill",rs(pk[1])+" / month"]];
+$("refNo").textContent=ref;
+$("sum").innerHTML=rows.concat(money).map(function(x){return '<div class="row'+(x[0]=="Total one-time charges"?" total":"")+'"><span>'+x[0]+'</span><span>'+String(x[1]).replace(/</g,"&lt;")+'</span></div>'}).join("");
+var msg="*New connection - Booking*\nBooking no.: "+ref+"\n\n"+rows.map(function(x){return x[0]+": "+x[1]}).join("\n")+"\n--------\n"+money.map(function(x){return x[0]+": "+x[1]}).join("\n");
+$("sendWa").href=wa(msg);
+$("bookForm").style.display="none";$("done").classList.add("on");window.scrollTo(0,0);
+};
+</script>
+</body>
+                                                                                                                       </html>
