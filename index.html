@@ -39,6 +39,9 @@ h2{font-size:1.2rem;margin:8px 0 12px}
 .row:last-child{border-bottom:0}
 .row .amt{font-weight:700;white-space:nowrap}
 .row.total{background:#f0f6fd;font-weight:700}
+.row.grand{background:var(--brand);color:#fff;font-weight:800;flex-direction:column;align-items:flex-start;gap:2px}
+.row.grand span:last-child{font-size:1.15rem}
+.sum .row span:last-child{text-align:right}
 .note{color:var(--muted);font-size:.9rem;margin:10px 4px}
 .search{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
 .search label{font-weight:700;display:block;margin-bottom:6px}
@@ -89,7 +92,7 @@ h2{font-size:1.2rem;margin:8px 0 12px}
 <div class="wrap">
 <section id="packages" class="on"><h2>Monthly packages</h2><div class="grid" id="pkgGrid"></div></section>
 <section id="charges"><h2>New connection charges</h2><div class="table" id="chTable"></div>
-<p class="note">One-time charges = installation + router + wire. Wire is a fixed Rs 2,000, no matter how much is used. The monthly package bill is separate.</p></section>
+<p class="note">Total to pay at installation = one-time charges + first month package bill. Example: 9 Mbps with 2.4G router = Rs 6,000 + Rs 1,500 = Rs 7,500.</p></section>
 <section id="area"><h2>Is our service available in your area?</h2>
 <div class="search"><label for="areaIn">Type your area name</label>
 <input id="areaIn" autocomplete="off">
@@ -145,7 +148,7 @@ $("pkgGrid").innerHTML=h;
 h='<div class="row"><span>Installation fee</span><span class="amt">'+rs(INSTALL)+'</span></div>';
 ROUTERS.forEach(function(r){h+='<div class="row"><span>'+r[0]+' router</span><span class="amt">'+rs(r[1])+'</span></div>'});
 h+='<div class="row"><span>Wire / cable</span><span class="amt">'+rs(WIRE)+' (fixed)</span></div><div class="row"><span>Security deposit</span><span class="amt">None</span></div>';
-ROUTERS.forEach(function(r){h+='<div class="row total"><span>Total with '+r[0]+' router</span><span class="amt">'+rs(INSTALL+WIRE+r[1])+'</span></div>'});
+ROUTERS.forEach(function(r){h+='<div class="row total"><span>One-time total with '+r[0]+' router</span><span class="amt">'+rs(INSTALL+WIRE+r[1])+' + package</span></div>'});
 $("chTable").innerHTML=h;
 $("chips").innerHTML=AREAS.map(function(a){return '<button class="chip">'+a+(a==PARTIAL?" *":"")+'</button>'}).join("");
 document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){$("areaIn").value=c.textContent.replace(" *","");checkArea()}});
@@ -191,16 +194,17 @@ var pk=PKGS.find(function(p){return String(p[0])==$("fPkg").value});
 var r=ROUTERS[$("fRouter").value];
 var area=($("fArea").value=="__other")?$("fOther").value.trim():$("fArea").value;
 var when=[$("fDate").value,$("fTime").value].filter(Boolean).join(" - ");
-var total=INSTALL+WIRE+r[1];
+var once=INSTALL+WIRE+r[1];
+var grand=once+pk[1];
 var ref="NC-"+String(Date.now()).slice(-6);
 var rows=[["Name",$("fName").value.trim()],["Mobile",$("fPhone").value.trim()],["CNIC",$("fCnic").value.trim()],["Package",pk[0]+" Mbps - "+rs(pk[1])+" / month"],["Router",r[0]],["Area",area],["Address",$("fAddr").value.trim()],["Installation",when],["Note",$("fNote").value.trim()]].filter(function(x){return x[1]});
-var money=[["Installation fee",rs(INSTALL)],["Router ("+r[0]+")",rs(r[1])],["Wire / cable",rs(WIRE)],["Total one-time charges",rs(total)],["Monthly package bill",rs(pk[1])+" / month"]];
+var money=[["Installation fee",rs(INSTALL)],["Router ("+r[0]+")",rs(r[1])],["Wire / cable",rs(WIRE)],["One-time charges",rs(once),"total"],["First month bill",rs(pk[1])],["TOTAL TO PAY",rs(once)+" + "+rs(pk[1])+" = "+rs(grand),"grand"]];
 $("refNo").textContent=ref;
-$("sum").innerHTML=rows.concat(money).map(function(x){return '<div class="row'+(x[0]=="Total one-time charges"?" total":"")+'"><span>'+x[0]+'</span><span>'+String(x[1]).replace(/</g,"&lt;")+'</span></div>'}).join("");
-var msg="*New connection - Booking*\nBooking no.: "+ref+"\n\n"+rows.map(function(x){return x[0]+": "+x[1]}).join("\n")+"\n--------\n"+money.map(function(x){return x[0]+": "+x[1]}).join("\n");
+$("sum").innerHTML=rows.concat(money).map(function(x){return '<div class="row'+(x[2]?" "+x[2]:"")+'"><span>'+x[0]+'</span><span>'+String(x[1]).replace(/</g,"&lt;")+'</span></div>'}).join("");
+var msg="*New connection - Booking*\nBooking no.: "+ref+"\n\n"+rows.map(function(x){return x[0]+": "+x[1]}).join("\n")+"\n--------\n"+money.map(function(x){return (x[2]=="grand"?"*":"")+x[0]+": "+x[1]+(x[2]=="grand"?"*":"")}).join("\n")+"\n\nAfter that: "+rs(pk[1])+" / month";
 $("sendWa").href=wa(msg);
 $("bookForm").style.display="none";$("done").classList.add("on");window.scrollTo(0,0);
 };
 </script>
 </body>
-                                                                                                                       </html>
+</html>
