@@ -92,7 +92,7 @@ h2{font-size:1.2rem;margin:8px 0 12px}
 <div class="wrap">
 <section id="packages" class="on"><h2>Monthly packages</h2><div class="grid" id="pkgGrid"></div></section>
 <section id="charges"><h2>New connection charges</h2><div class="table" id="chTable"></div>
-<p class="note">Total to pay at installation = one-time charges + first month package bill. Example: 9 Mbps with 2.4G router = Rs 6,000 + Rs 1,500 = Rs 7,500.</p></section>
+<p class="note">Total to pay at installation = one-time charges + first month package bill. Example: 9 Mbps with 2.4G router = Rs 6,000 + Rs 1,500 = Rs 7,500. Have your own router or wire? Choose it in the booking form and it will cost Rs 0.</p></section>
 <section id="area"><h2>Is our service available in your area?</h2>
 <div class="search"><label for="areaIn">Type your area name</label>
 <input id="areaIn" autocomplete="off">
@@ -108,6 +108,7 @@ h2{font-size:1.2rem;margin:8px 0 12px}
 </div>
 <div class="field"><label for="fPkg">Package</label><select id="fPkg"></select><span class="msg">This field is required</span></div>
 <div class="field"><label for="fRouter">Router</label><select id="fRouter"></select></div>
+<div class="field"><label for="fWire">Wire / cable</label><select id="fWire"></select></div>
 <div class="field"><label for="fArea">Area</label><select id="fArea"></select><span class="msg">This field is required</span></div>
 <div class="field" id="otherWrap" style="display:none"><label for="fOther">Type your area name</label><input id="fOther"><span class="msg">This field is required</span></div>
 <div class="field"><label for="fAddr">Full address (house no., street, block)</label><textarea id="fAddr"></textarea><span class="msg">This field is required</span></div>
@@ -136,6 +137,8 @@ h2{font-size:1.2rem;margin:8px 0 12px}
 var WA="923125575670", INSTALL=1000, WIRE=2000;
 var PKGS=[[4,1000],[6,1200],[9,1500],[12,2000],[15,2500],[18,3000],[24,3500]];
 var ROUTERS=[["2.4G",3000],["5G",5000]];
+var OWN_ROUTER="Own router";
+var WIRES=[["Wire from Bellacom",WIRE],["Own wire",0]];
 var AREAS=["Janjua Town","Banker Colony","Mehmood Abad","UBL Bank","Hill View","Doctor Colony","Zulfiqar Colony","Defence Road"];
 var PARTIAL="Defence Road";
 function $(id){return document.getElementById(id)}
@@ -147,13 +150,15 @@ PKGS.forEach(function(p){h+='<div class="pkg"><div class="speed">'+p[0]+' <small
 $("pkgGrid").innerHTML=h;
 h='<div class="row"><span>Installation fee</span><span class="amt">'+rs(INSTALL)+'</span></div>';
 ROUTERS.forEach(function(r){h+='<div class="row"><span>'+r[0]+' router</span><span class="amt">'+rs(r[1])+'</span></div>'});
-h+='<div class="row"><span>Wire / cable</span><span class="amt">'+rs(WIRE)+' (fixed)</span></div><div class="row"><span>Security deposit</span><span class="amt">None</span></div>';
+h+='<div class="row"><span>Own router</span><span class="amt">Rs 0</span></div><div class="row"><span>Wire / cable</span><span class="amt">'+rs(WIRE)+' (fixed)</span></div><div class="row"><span>Own wire</span><span class="amt">Rs 0</span></div><div class="row"><span>Security deposit</span><span class="amt">None</span></div>';
 ROUTERS.forEach(function(r){h+='<div class="row total"><span>One-time total with '+r[0]+' router</span><span class="amt">'+rs(INSTALL+WIRE+r[1])+' + package</span></div>'});
+h+='<div class="row total"><span>Own router + own wire</span><span class="amt">'+rs(INSTALL)+' + package</span></div>';
 $("chTable").innerHTML=h;
 $("chips").innerHTML=AREAS.map(function(a){return '<button class="chip">'+a+(a==PARTIAL?" *":"")+'</button>'}).join("");
 document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){$("areaIn").value=c.textContent.replace(" *","");checkArea()}});
 $("fPkg").innerHTML='<option value="">- Select -</option>'+PKGS.map(function(p){return '<option value="'+p[0]+'">'+p[0]+' Mbps - '+rs(p[1])+' / month</option>'}).join("");
-$("fRouter").innerHTML=ROUTERS.map(function(r,i){return '<option value="'+i+'">'+r[0]+' router - '+rs(r[1])+'</option>'}).join("");
+$("fRouter").innerHTML=ROUTERS.map(function(r,i){return '<option value="'+i+'">'+r[0]+' router - '+rs(r[1])+'</option>'}).join("")+'<option value="own">I have my own router - Rs 0</option>';
+$("fWire").innerHTML='<option value="0">Wire from Bellacom - '+rs(WIRE)+'</option><option value="1">I have my own wire - Rs 0</option>';
 $("fArea").innerHTML='<option value="">- Select -</option>'+AREAS.map(function(a){return '<option>'+a+'</option>'}).join("")+'<option value="__other">My area is not listed</option>';
 function checkArea(){
 var v=$("areaIn").value.trim(),box=$("areaRes");
@@ -191,14 +196,15 @@ var ph=$("fPhone").value.replace(/[\s-]/g,"");
 if(!/^(\+?92|0)?3\d{9}$/.test(ph)){$("fPhone").closest(".field").classList.add("err");bad=bad||"fPhone"}
 if(bad){$(bad).focus();return}
 var pk=PKGS.find(function(p){return String(p[0])==$("fPkg").value});
-var r=ROUTERS[$("fRouter").value];
+var r=($("fRouter").value=="own")?[OWN_ROUTER,0]:ROUTERS[$("fRouter").value];
+var w=WIRES[$("fWire").value];
 var area=($("fArea").value=="__other")?$("fOther").value.trim():$("fArea").value;
 var when=[$("fDate").value,$("fTime").value].filter(Boolean).join(" - ");
-var once=INSTALL+WIRE+r[1];
+var once=INSTALL+w[1]+r[1];
 var grand=once+pk[1];
 var ref="NC-"+String(Date.now()).slice(-6);
-var rows=[["Name",$("fName").value.trim()],["Mobile",$("fPhone").value.trim()],["CNIC",$("fCnic").value.trim()],["Package",pk[0]+" Mbps - "+rs(pk[1])+" / month"],["Router",r[0]],["Area",area],["Address",$("fAddr").value.trim()],["Installation",when],["Note",$("fNote").value.trim()]].filter(function(x){return x[1]});
-var money=[["Installation fee",rs(INSTALL)],["Router ("+r[0]+")",rs(r[1])],["Wire / cable",rs(WIRE)],["One-time charges",rs(once),"total"],["First month bill",rs(pk[1])],["TOTAL TO PAY",rs(once)+" + "+rs(pk[1])+" = "+rs(grand),"grand"]];
+var rows=[["Name",$("fName").value.trim()],["Mobile",$("fPhone").value.trim()],["CNIC",$("fCnic").value.trim()],["Package",pk[0]+" Mbps - "+rs(pk[1])+" / month"],["Router",r[0]],["Wire",w[0]],["Area",area],["Address",$("fAddr").value.trim()],["Installation",when],["Note",$("fNote").value.trim()]].filter(function(x){return x[1]});
+var money=[["Installation fee",rs(INSTALL)],["Router",rs(r[1])],["Wire / cable",rs(w[1])],["One-time charges",rs(once),"total"],["First month bill",rs(pk[1])],["TOTAL TO PAY",rs(once)+" + "+rs(pk[1])+" = "+rs(grand),"grand"]];
 $("refNo").textContent=ref;
 $("sum").innerHTML=rows.concat(money).map(function(x){return '<div class="row'+(x[2]?" "+x[2]:"")+'"><span>'+x[0]+'</span><span>'+String(x[1]).replace(/</g,"&lt;")+'</span></div>'}).join("");
 var msg="*New connection - Booking*\nBooking no.: "+ref+"\n\n"+rows.map(function(x){return x[0]+": "+x[1]}).join("\n")+"\n--------\n"+money.map(function(x){return (x[2]=="grand"?"*":"")+x[0]+": "+x[1]+(x[2]=="grand"?"*":"")}).join("\n")+"\n\nAfter that: "+rs(pk[1])+" / month";
